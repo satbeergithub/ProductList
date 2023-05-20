@@ -5,10 +5,10 @@ import Home from "./Pages/Home";
 import Navbar from "./Component/Navbar";
 import { Provider } from "react-redux";
 import store from "./Store/store";
-
+import "./App.css"
 function App() {
   return (
-    <div>
+    <div className="app">
       <Provider store={store}>
         <BrowserRouter>
           <Navbar />

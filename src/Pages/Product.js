@@ -57,8 +57,6 @@ function Product() {
   }, []);
 
   const handleAdd = (id) => {
-    // const selectedProduct = data.find((product) => product.id === id);
-    // dispatch(add({ id: selectedProduct.id, quantity: selectedProduct.quantity }));
     dispatch(add(id))
   };
 
