@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { add } from "../Store/Slice";
 import axios from "axios";
+import './product.css'
 import {
   Button,
   Card,
@@ -72,6 +73,7 @@ function Product() {
         flexWrap: "wrap",
         justifyContent: "space-between",
       }}
+      className="products"
     >
       {loading ? (
         <div
