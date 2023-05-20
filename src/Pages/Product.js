@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { add } from "../Store/Slice";
 import axios from "axios";
 import {
   Button,
@@ -13,21 +15,25 @@ import { AiOutlineMinus, AiOutlinePlus } from "react-icons/ai";
 
 function Product() {
   const [data, setData] = useState([]);
-  const [quantities, setQuantities] = useState({});
   const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
 
-  const increment = (productId) => {
-    setQuantities((prevQuantities) => ({
-      ...prevQuantities,
-      [productId]: (prevQuantities[productId] || 0) + 1,
-    }));
+  const increment = (id) => {
+    setData((prevData) =>
+      prevData.map((product) =>
+        product.id === id ? { ...product, quantity: product.quantity + 1 } : product
+      )
+    );
   };
 
-  const decrement = (productId) => {
-    setQuantities((prevQuantities) => ({
-      ...prevQuantities,
-      [productId]: Math.max((prevQuantities[productId] || 0) - 1, 0),
-    }));
+  const decrement = (id) => {
+    setData((prevData) =>
+      prevData.map((product) =>
+        product.id === id && product.quantity > 0
+          ? { ...product, quantity: product.quantity - 1 }
+          : product
+      )
+    );
   };
 
   useEffect(() => {
@@ -35,16 +41,11 @@ function Product() {
       setLoading(true);
       try {
         const response = await axios.get("https://dummyjson.com/products");
-        setData(response.data.products);
-        setQuantities(
-          response.data.products.reduce(
-            (prevQuantities, product) => ({
-              ...prevQuantities,
-              [product.id]: 0,
-            }),
-            {}
-          )
-        );
+        const products = response.data.products.map((product) => ({
+          ...product,
+          quantity: 0,
+        }));
+        setData(products);
       } catch (error) {
         alert(error.message);
       } finally {
@@ -55,14 +56,14 @@ function Product() {
     fetchData();
   }, []);
 
-  const deleteHandler = (productId) => {
-    const newData = data.filter((product) => product.id !== productId);
-    setData(newData);
-    setQuantities((prevQuantities) => {
-      const updatedQuantities = { ...prevQuantities };
-      delete updatedQuantities[productId];
-      return updatedQuantities;
-    });
+  const handleAdd = (id) => {
+    const selectedProduct = data.find((product) => product.id === id);
+    dispatch(add({ id: selectedProduct.id, quantity: selectedProduct.quantity }));
+  };
+
+  const deleteHandler = (id) => {
+    const newdata = data.filter((product) => product.id !== id);
+    setData(newdata);
   };
 
   return (
@@ -74,19 +75,19 @@ function Product() {
       }}
     >
       {loading ? (
-        <div className="d-flex" style={{position:'absolute',left:"50%",top:'50%'
-        }}>
-          <Spinner></Spinner>
+        <div
+          className="d-flex"
+          style={{ position: "absolute", left: "50%", top: "50%" }}
+        >
+          <Spinner className="me-2"></Spinner>
           <h5>Loading....</h5>
         </div>
       ) : (
-        data.map((product) => {
-          const { id, thumbnail, title, price, discountPercentage } = product;
-          const quantity = quantities[id] || 0;
-
+        data.map((product, i) => {
+          const { id, thumbnail, title, price, discountPercentage, quantity } = product;
           return (
             <div
-              key={id}
+              key={i}
               style={{
                 width: "20%",
                 marginBottom: "20px",
@@ -151,7 +152,9 @@ function Product() {
                       </span>
                     </div>
                     <div className="d-flex justify-content-between mt-4">
-                      <Button color="success">Add to Cart</Button>
+                      <Button color="success" onClick={() => handleAdd(id)}>
+                        Add to Cart
+                      </Button>
                       <span
                         className="text-danger me-4"
                         onClick={() => deleteHandler(id)}
