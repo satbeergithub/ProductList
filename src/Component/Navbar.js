@@ -24,7 +24,7 @@ function Navbar() {
       </nav>
       <span onClick={handleToggle} className="hamburgericon">
         {navbarOpen ? (
-          <i>
+          <i style={{marginRight:'-30px'}}>
             <RxCross1></RxCross1>
           </i>
         ) : (
