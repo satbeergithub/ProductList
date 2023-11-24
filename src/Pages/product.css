@@ -1,9 +1,0 @@
-
-@media(max-width:800px){
-   .products {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-right: 11em;
-   }
-}
