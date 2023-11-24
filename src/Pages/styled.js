@@ -89,6 +89,9 @@ export const FilterDiv = styled.div`
   @media(max-width:500px){
    width:80%
   }
+  @media(max-width:400px){
+    width:85%
+   }
 `;
 export const GreenBox = styled.div`
   width: 100px;
